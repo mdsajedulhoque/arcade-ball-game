@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arcade Ball Game</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 20px;
+        }
+
+        #gameContainer {
+            text-align: center;
+        }
+
+        canvas {
+            background: #222; /* Default background, can be replaced by the image */
+            border: 2px solid #fff;
+        }
+
+        #photo {
+            width: 480px;
+            height: 220px;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 📸 YOUR PHOTO -->
+<img id="photo" src="The Freelancer’s Journey.jpg" alt="Profile Photo">
+
+<div id="gameContainer">
+    <h2>Arcade Ball Game</h2>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Background
+const backgroundImage = new Image();
+backgroundImage.src = 'Presentation class.jpg';
+
+// Paddle
+let paddleWidth = 100;
+let paddleHeight = 12;
+let paddleX = (canvas.width - paddleWidth) / 2;
+
+// Ball
+let ballX = canvas.width / 2;
+let ballY = canvas.height - 40;
+let ballRadius = 8;
+let speed = 4;
+let dx = 3;
+let dy = -3;
+
+// Controls
+let rightPressed = false;
+let leftPressed = false;
+
+// Score & Lives
+let score = 0;
+let lives = 3;
+
+// Fruits (blocks)
+let fruits = [];
+let rows = 4;
+let cols = 8;
+let fruitWidth = 60;
+let fruitHeight = 20;
+let padding = 10;
+
+for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+        fruits.push({
+            x: c * (fruitWidth + padding) + 30,
+            y: r * (fruitHeight + padding) + 40,
+            status: 1
+        });
+    }
+}
+
+// Controls
+document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") rightPressed = true;
+    if (e.key === "ArrowLeft") leftPressed = true;
+});
+document.addEventListener("keyup", e => {
+    if (e.key === "ArrowRight") rightPressed = false;
+    if (e.key === "ArrowLeft") leftPressed = false;
+});
+
+// Mouse
+document.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    let relativeX = e.clientX - rect.left;
+    paddleX = relativeX - paddleWidth / 2;
+
+    // FIX: Clamp paddle inside canvas
+    paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX));
+});
+
+// Paddle
+function drawPaddle() {
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#00ff88";
+    ctx.fillStyle = "#00ff88";
+    ctx.fillRect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
+    ctx.shadowBlur = 0;
+}
+
+// Ball
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+    ctx.fillStyle = "#ff4444";
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#ff4444";
+    ctx.fill();
+    ctx.closePath();
+    ctx.shadowBlur = 0;
+}
+
+// Fruits
+function drawFruits() {
+    for (let f of fruits) {
+        if (f.status === 1) {
+            ctx.fillStyle = `hsl(${Math.random()*360}, 80%, 50%)`;
+            ctx.fillRect(f.x, f.y, fruitWidth, fruitHeight);
+        }
+    }
+}
+
+// Collision
+function collisionDetection() {
+    let remaining = 0;
+
+    for (let f of fruits) {
+        if (f.status === 1) {
+            remaining++;
+
+            if (
+                ballX > f.x &&
+                ballX < f.x + fruitWidth &&
+                ballY > f.y &&
+                ballY < f.y + fruitHeight
+            ) {
+                dy = -dy;
+                f.status = 0;
+                score++;
+
+                // Slight speed increase
+                dx *= 1.02;
+                dy *= 1.02;
+            }
+        }
+    }
+
+    // WIN CONDITION 🎉
+    if (remaining === 0) {
+        alert("YOU WIN! Score: " + score);
+        document.location.reload();
+    }
+}
+
+// UI
+function drawUI() {
+    ctx.fillStyle = "#fff";
+    ctx.font = "16px Arial";
+    ctx.fillText("Score: " + score, 10, 20);
+    ctx.fillText("Lives: " + lives, canvas.width - 80, 20);
+}
+
+// Reset Ball
+function resetBall() {
+    ballX = canvas.width / 2;
+    ballY = canvas.height - 40;
+    dx = 3 * (Math.random() > 0.5 ? 1 : -1);
+    dy = -3;
+}
+
+// Game Loop
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Background fallback
+    if (backgroundImage.complete) {
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    } else {
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    drawBall();
+    drawPaddle();
+    drawFruits();
+    drawUI();
+    collisionDetection();
+
+    // Wall bounce
+    if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
+        dx = -dx;
+    }
+
+    if (ballY + dy < ballRadius) {
+        dy = -dy;
+    }
+
+    // 🎯 REALISTIC PADDLE PHYSICS
+    if (
+        ballY + dy > canvas.height - paddleHeight - 5 - ballRadius &&
+        ballX > paddleX &&
+        ballX < paddleX + paddleWidth
+    ) {
+        let hitPoint = (ballX - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
+        dx = hitPoint * speed;
+        dy = -Math.abs(dy);
+    }
+
+    // Lose life
+    if (ballY > canvas.height) {
+        lives--;
+        if (lives <= 0) {
+            alert("Game Over! Score: " + score);
+            document.location.reload();
+        } else {
+            resetBall();
+        }
+    }
+
+    // Movement
+    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 6;
+    if (leftPressed && paddleX > 0) paddleX -= 6;
+
+    ballX += dx;
+    ballY += dy;
+
+    requestAnimationFrame(draw);
+}
+
+backgroundImage.onload = () => draw();
+</script>
+
+</body>
+</html>
