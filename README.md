@@ -2,7 +2,8 @@
 
 Welcome to the GitHub repository for my personal website's recreation and entertainment showcase! This project is a tribute to childhood nostalgia, featuring custom-built, retro-inspired web arcade games seamlessly integrated next to my personal portfolio profile.
 
-🌐 **Live Website:** [jonotarbazar.netlify.app] (https://jonotarbazar.netlify.app) and
+🌐 **Live Website:** [My Site] (https://sites.google.com/view/mdsajedulhoque/home) and sites advertised
+                      [jonotarbazar.netlify.app] (https://jonotarbazar.netlify.app) and
                       [homedesk-official.netlify.app] (https://homedesk-official.netlify.app/)
 
 ---
