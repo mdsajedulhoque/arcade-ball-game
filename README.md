@@ -1,8 +1,9 @@
 # 🕹️ MD. Sajedul Hoque - Personal Arcade & Recreation Showcase
 
-Welcome to the GitHub repository for my personal website's recreation and entertainment showcase! This project is a tribute to childhood nostalgia, featuring custom-built, retro-inspired web arcade games seamlessly integrated next to my personal portfolio profile[cite: 1].
+Welcome to the GitHub repository for my personal website's recreation and entertainment showcase! This project is a tribute to childhood nostalgia, featuring custom-built, retro-inspired web arcade games seamlessly integrated next to my personal portfolio profile.
 
-🌐 **Live Website:** [jonotarbazar.netlify.app](https://jonotarbazar.netlify.app)[cite: 1]
+🌐 **Live Website:** [jonotarbazar.netlify.app](https://jonotarbazar.netlify.app)
+                      [homedesk-official.netlify.app] (https://homedesk-official.netlify.app/)
 
 ---
 
