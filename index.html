@@ -3,281 +3,626 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APPLE DX BALL GAME</title>
+    <title>MD. SAJEDUL HOQUE - ARCADE SHOWCASE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            background: #111;
-            color: magenta;
-            font-family: Orbitron;
+            background: #05050a;
+            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
             height: 100vh;
-            gap: 20px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .showcase-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            background: rgba(15, 15, 25, 0.85);
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            max-width: 1150px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        #profileContainer {
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #photo {
+            max-width: 400px;
+            max-height: 420px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 14px;
+            border: 3px solid #00ffcc;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.35);
+            display: block;
+            margin: 0 auto;
         }
 
         #gameContainer {
             text-align: center;
+            flex-grow: 1;
         }
 
-        canvas {
-    background: #222;
-    border: 2px solid #fff;
-    /* FIX: Make canvas responsive */
-    max-width: 100%;
-    height: auto;
-    box-sizing: border-box;
-}
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-        #photo {
-            width: 600px;
-            height: 600px;
-            object-fit: cover;
-            border: 3px solid white;
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+        }
+
+        .game-btn {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 8px 14px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .game-btn:hover {
+            background: #00ffcc;
+            color: #05050a;
+            box-shadow: 0 0 12px #00ffcc;
+        }
+
+        canvas.gameCanvas {
+            background: #111119;
+            border: 2px solid #00ffcc;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 540px;
+            height: 420px;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .instructions {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #8888aa;
+        }
+
+        .showcase-link {
+            color: #00ffcc;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .showcase-link:hover {
+            color: #ff007f;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 950px) {
+            .showcase-wrapper {
+                flex-direction: column;
+                gap: 25px;
+                padding: 20px;
+            }
+            #photo {
+                max-width: 280px;
+                max-height: 280px;
+            }
+            canvas.gameCanvas {
+                height: 350px;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- 📸 YOUR PHOTO -->
-<img id="photo" src="marka-ta-ki-dalpuri-book-cover.jpg" alt="profile photo">
+<canvas id="bgCanvas"></canvas>
 
-<div id="gameContainer">
-    <h1>APPLE DX BALL GAME</h1>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
+<div class="showcase-wrapper">
+    <!-- PROFILE SHOWCASE -->
+    <div id="profileContainer">
+        <img id="photo" src="marka-ta-ki-dalpuri-book-cover.jpg" alt="Profile Showcase[cite: 1]">
+        <h3 style="margin: 14px 0 6px 0; color: #fff; font-size: 1.2rem;">MD. Sajedul Hoque</h3>
+        <p class="instructions" style="margin:0;">
+            Recreation & Showcase<br>
+            <a href="https://jonotarbazar.netlify.app" target="_blank" class="showcase-link">jonotarbazar.netlify.app</a> <br>
+            <a href="https://homedesk-official.netlify.app" target="_blank" class="showcase-link">homedesk-official.netlify.app</a>
+        </p>
+    </div>
+
+    <!-- GAME CONTAINER -->
+    <div id="gameContainer">
+        <div class="header-row">
+            <h1 id="gameTitle">🍎 APPLE DX-STRIKE</h1>
+            <button class="game-btn" onclick="switchGame()">SWITCH GAME 🎮</button>
+        </div>
+
+        <!-- DX BALL GAME -->
+        <div id="dxGameWrapper">
+            <canvas id="dxCanvas" class="gameCanvas" width="540" height="420"></canvas>
+            <p class="instructions">Use Mouse, Touch, or Left/Right Keys</p>
+        </div>
+
+        <!-- CAR RACING GAME -->
+        <div id="carGameWrapper" style="display: none;">
+            <canvas id="carCanvas" class="gameCanvas" width="540" height="420"></canvas>
+            <p class="instructions">Steer Car with Mouse, Touch, or Left/Right Keys</p>
+        </div>
+    </div>
 </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const fruitImg = new Image(); fruitImg.src = 'apple.png';
+/* ================= BACKGROUND STARFIELD ================= */
+const bgCanvas = document.getElementById("bgCanvas");
+const bgCtx = bgCanvas.getContext("2d");
 
-// Background
-const backgroundImage = new Image();
-backgroundImage.src = 'Game-background-image-md-sajedul-hoque.jpg';
+function resizeBg() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeBg);
+resizeBg();
 
-// Paddle
-let paddleWidth = 100;
-let paddleHeight = 12;
-let paddleX = (canvas.width - paddleWidth) / 2;
+let mouseX = -1000, mouseY = -1000;
+window.addEventListener("mousemove", e => { mouseX = e.clientX; mouseY = e.clientY; });
 
-// Ball
-let ballX = canvas.width / 2;
-let ballY = canvas.height - 40;
-let ballRadius = 8;
-let speed = 4;
-let dx = 3;
-let dy = -3;
+const stars = [];
+for (let i = 0; i < 90; i++) {
+    stars.push({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        radius: Math.random() * 1.8 + 0.5,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        alpha: Math.random() * 0.7 + 0.3
+    });
+}
 
-// Controls
-let rightPressed = false;
-let leftPressed = false;
+function animateBackground() {
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    for (let s of stars) {
+        s.x += s.dx; s.y += s.dy;
+        if (s.x < 0) s.x = bgCanvas.width; if (s.x > bgCanvas.width) s.x = 0;
+        if (s.y < 0) s.y = bgCanvas.height; if (s.y > bgCanvas.height) s.y = 0;
 
-// Score & Lives
-let score = 0;
-let lives = 3;
+        bgCtx.beginPath();
+        bgCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(0, 255, 204, ${s.alpha})`;
+        bgCtx.fill();
 
-// Fruits (blocks)
-let fruits = [];
-let rows = 4;
-let cols = 8;
-let fruitWidth = 60;
-let fruitHeight = 20;
-let padding = 10;
+        let dist = Math.sqrt((s.x - mouseX)**2 + (s.y - mouseY)**2);
+        if (dist < 120) {
+            bgCtx.beginPath();
+            bgCtx.moveTo(s.x, s.y); bgCtx.lineTo(mouseX, mouseY);
+            bgCtx.strokeStyle = `rgba(0, 255, 204, ${1 - dist / 120})`;
+            bgCtx.lineWidth = 0.5;
+            bgCtx.stroke();
+        }
+    }
+    requestAnimationFrame(animateBackground);
+}
+animateBackground();
 
-for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-        fruits.push({
-            x: c * (fruitWidth + padding) + 30,
-            y: r * (fruitHeight + padding) + 40,
-            status: 1
+
+/* ================= GAME SWITCHER ================= */
+let activeGame = 'dx';
+
+function switchGame() {
+    activeGame = activeGame === 'dx' ? 'car' : 'dx';
+    if (activeGame === 'dx') {
+        document.getElementById('dxGameWrapper').style.display = 'block';
+        document.getElementById('carGameWrapper').style.display = 'none';
+        document.getElementById('gameTitle').innerText = '🍎 APPLE DX-STRIKE';
+    } else {
+        document.getElementById('dxGameWrapper').style.display = 'none';
+        document.getElementById('carGameWrapper').style.display = 'block';
+        document.getElementById('gameTitle').innerText = '🏎️ TURBO CAR RACING';
+        resetCarGame();
+    }
+}
+
+
+/* ================= 1. APPLE DX-STRIKE GAME ================= */
+const dxCanvas = document.getElementById("dxCanvas");
+const dxCtx = dxCanvas.getContext("2d");
+const fruitImg = new Image(); 
+fruitImg.src = 'apple.png';
+
+let paddleWidth = 100, paddleHeight = 12, paddleX = (dxCanvas.width - paddleWidth) / 2;
+let balls = [{ x: dxCanvas.width / 2, y: dxCanvas.height - 40, radius: 8, dx: 3.5, dy: -3.5, speed: 4.5 }];
+let rightPressed = false, leftPressed = false;
+let scoreDx = 0, livesDx = 3, isGameOverDx = false, winDx = false;
+let fruits = [], particlesDx = [], powerUps = [];
+
+function initFruits() {
+    fruits = [];
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 8; c++) {
+            fruits.push({ x: c * 60 + 30, y: r * 30 + 45, status: 1, hasPowerUp: Math.random() < 0.15 });
+        }
+    }
+}
+initFruits();
+
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight") rightPressed = true; if (e.key === "ArrowLeft") leftPressed = true; });
+document.addEventListener("keyup", e => { if (e.key === "ArrowRight") rightPressed = false; if (e.key === "ArrowLeft") leftPressed = false; });
+
+dxCanvas.addEventListener("mousemove", e => {
+    if (activeGame !== 'dx') return;
+    let rect = dxCanvas.getBoundingClientRect();
+    paddleX = (e.clientX - rect.left) * (dxCanvas.width / rect.width) - paddleWidth / 2;
+    paddleX = Math.max(0, Math.min(dxCanvas.width - paddleWidth, paddleX));
+});
+
+dxCanvas.addEventListener("touchstart", handleDxTouch, { passive: false });
+dxCanvas.addEventListener("touchmove", handleDxTouch, { passive: false });
+
+function handleDxTouch(e) {
+    if (activeGame !== 'dx') return;
+    e.preventDefault();
+    let rect = dxCanvas.getBoundingClientRect();
+    let touch = e.touches[0];
+    paddleX = (touch.clientX - rect.left) * (dxCanvas.width / rect.width) - paddleWidth / 2;
+    paddleX = Math.max(0, Math.min(dxCanvas.width - paddleWidth, paddleX));
+}
+
+function createParticles(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+        particlesDx.push({
+            x: x, y: y,
+            dx: (Math.random() - 0.5) * 5,
+            dy: (Math.random() - 0.5) * 5,
+            radius: Math.random() * 3 + 1,
+            color: color, life: 30
         });
     }
 }
 
-// Controls
-document.addEventListener("keydown", e => {
-    if (e.key === "ArrowRight") rightPressed = true;
-    if (e.key === "ArrowLeft") leftPressed = true;
-});
-document.addEventListener("keyup", e => {
-    if (e.key === "ArrowRight") rightPressed = false;
-    if (e.key === "ArrowLeft") leftPressed = false;
-});
+function updateDxGame() {
+    if (activeGame !== 'dx') return;
 
-// Mouse
-document.addEventListener("mousemove", e => {
-    const rect = canvas.getBoundingClientRect();
-    let relativeX = e.clientX - rect.left;
-    paddleX = relativeX - paddleWidth / 2;
+    dxCtx.fillStyle = "#111119";
+    dxCtx.fillRect(0, 0, dxCanvas.width, dxCanvas.height);
 
-    // FIX: Clamp paddle inside canvas
-    paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX));
-});
+    if (isGameOverDx) {
+        dxCtx.fillStyle = "rgba(0,0,0,0.85)";
+        dxCtx.fillRect(0, 0, dxCanvas.width, dxCanvas.height);
+        dxCtx.fillStyle = winDx ? "#00ffcc" : "#ff4444";
+        dxCtx.font = "bold 20px Orbitron";
+        dxCtx.textAlign = "center";
+        dxCtx.fillText(winDx ? "YOU WIN!" : "GAME OVER", dxCanvas.width / 2, dxCanvas.height / 2 - 15);
+        dxCtx.fillStyle = "#fff";
+        dxCtx.font = "13px Orbitron";
+        dxCtx.fillText("Final Score: " + scoreDx, dxCanvas.width / 2, dxCanvas.height / 2 + 10);
+        dxCtx.fillText("Restarting...", dxCanvas.width / 2, dxCanvas.height / 2 + 35);
+        return;
+    }
 
-// 📱 MOBILE TOUCH CONTROLS
-function handleTouch(e) {
-    // Prevent the page from scrolling up and down while playing
-    e.preventDefault(); 
-    
-    const rect = canvas.getBoundingClientRect();
-    // Get the coordinates of the first finger touch
-    let touch = e.touches[0]; 
-    
-    // Calculate touch position relative to the canvas scale
-    let relativeX = (touch.clientX - rect.left) * (canvas.width / rect.width);
-    
-    // Move paddle center to finger position
-    paddleX = relativeX - paddleWidth / 2;
-    
-    // Clamp paddle inside canvas boundaries
-    paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX));
-}
+    // Grid lines
+    dxCtx.strokeStyle = "rgba(0, 255, 204, 0.03)";
+    for (let x = 0; x < dxCanvas.width; x += 30) { dxCtx.beginPath(); dxCtx.moveTo(x, 0); dxCtx.lineTo(x, dxCanvas.height); dxCtx.stroke(); }
+    for (let y = 0; y < dxCanvas.height; y += 30) { dxCtx.beginPath(); dxCtx.moveTo(0, y); dxCtx.lineTo(dxCanvas.width, y); dxCtx.stroke(); }
 
-// Listen for touch start and finger dragging
-canvas.addEventListener("touchstart", handleTouch, { passive: false });
-canvas.addEventListener("touchmove", handleTouch, { passive: false });
+    // Particles
+    for (let i = particlesDx.length - 1; i >= 0; i--) {
+        let p = particlesDx[i];
+        dxCtx.beginPath();
+        dxCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        dxCtx.fillStyle = p.color;
+        dxCtx.fill();
+        p.x += p.dx; p.y += p.dy; p.life--;
+        if (p.life <= 0) particlesDx.splice(i, 1);
+    }
 
-// Paddle
-function drawPaddle() {
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = "#00ff88";
-    ctx.fillStyle = "#00ff88";
-    ctx.fillRect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
-    ctx.shadowBlur = 0;
-}
+    // Power-ups
+    for (let i = powerUps.length - 1; i >= 0; i--) {
+        let pow = powerUps[i];
+        dxCtx.beginPath();
+        dxCtx.arc(pow.x, pow.y, 11, 0, Math.PI * 2);
+        dxCtx.fillStyle = pow.type === 'life' ? '#ff4444' : (pow.type === 'expand' ? '#00ff88' : '#ffaa00');
+        dxCtx.fill();
+        dxCtx.fillStyle = "#fff";
+        dxCtx.font = "11px Orbitron";
+        dxCtx.textAlign = "center";
+        dxCtx.fillText(pow.type === 'life' ? '❤️' : (pow.type === 'expand' ? '📏' : '⚽'), pow.x, pow.y + 4);
+        
+        pow.y += 2;
 
-// Ball
-function drawBall() {
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "#ff4444";
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = "#ff4444";
-    ctx.fill();
-    ctx.closePath();
-    ctx.shadowBlur = 0;
-}
-
-// Fruits
-function drawFruits() {
-    for (let f of fruits) {
-        if (f.status === 1) {
-            ctx.fillStyle = `hsl(${Math.random()*360}, 80%, 50%)`;
-            ctx.drawImage(fruitImg, f.x, f.y, fruitWidth, fruitHeight);
+        if (pow.y >= dxCanvas.height - 25 && pow.x >= paddleX && pow.x <= paddleX + paddleWidth) {
+            if (pow.type === 'life') livesDx++;
+            else if (pow.type === 'expand') { paddleWidth = Math.min(150, paddleWidth + 40); setTimeout(() => { paddleWidth = 100; }, 10000); }
+            else if (pow.type === 'multiball' && balls.length > 0) {
+                let b = balls[0];
+                balls.push({ x: b.x, y: b.y, radius: 8, dx: -b.dx, dy: b.dy, speed: b.speed });
+            }
+            powerUps.splice(i, 1);
+        } else if (pow.y > dxCanvas.height) {
+            powerUps.splice(i, 1);
         }
     }
-}
 
-// Collision
-function collisionDetection() {
+    // Fruits
     let remaining = 0;
-
     for (let f of fruits) {
         if (f.status === 1) {
             remaining++;
-
-            if (
-                ballX > f.x &&
-                ballX < f.x + fruitWidth &&
-                ballY > f.y &&
-                ballY < f.y + fruitHeight
-            ) {
-                dy = -dy;
-                f.status = 0;
-                score++;
-
-                // Slight speed increase
-                dx *= 1.02;
-                dy *= 1.02;
+            dxCtx.drawImage(fruitImg, f.x, f.y, 50, 22);
+            for (let b of balls) {
+                if (b.x > f.x && b.x < f.x + 50 && b.y > f.y && b.y < f.y + 22) {
+                    b.dy = -b.dy; f.status = 0; scoreDx++;
+                    createParticles(f.x + 25, f.y + 11, "#00ffcc");
+                    if (f.hasPowerUp) {
+                        let types = ['life', 'expand', 'multiball'];
+                        powerUps.push({ x: f.x + 25, y: f.y, type: types[Math.floor(Math.random() * types.length)] });
+                    }
+                }
             }
         }
     }
 
-    // WIN CONDITION 🎉
     if (remaining === 0) {
-        alert("YOU WIN! Score: " + score);
-        document.location.reload();
-    }
-}
-
-// UI
-function drawUI() {
-    ctx.fillStyle = "#fff";
-    ctx.font = "16px Arial";
-    ctx.fillText("Score: " + score, 10, 20);
-    ctx.fillText("Lives: " + lives, canvas.width - 80, 20);
-}
-
-// Reset Ball
-function resetBall() {
-    ballX = canvas.width / 2;
-    ballY = canvas.height - 40;
-    dx = 3 * (Math.random() > 0.5 ? 1 : -1);
-    dy = -3;
-}
-
-// Game Loop
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Background fallback
-    if (backgroundImage.complete) {
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    } else {
-        ctx.fillStyle = "#111";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        isGameOverDx = true;
+        winDx = true;
+        setTimeout(() => { document.location.reload(); }, 2000);
     }
 
-    drawBall();
-    drawPaddle();
-    drawFruits();
-    drawUI();
-    collisionDetection();
+    if (rightPressed && paddleX < dxCanvas.width - paddleWidth) paddleX += 8;
+    if (leftPressed && paddleX > 0) paddleX -= 8;
 
-    // Wall bounce
-    if (ballX + dx > canvas.width - ballRadius || ballX + dx < ballRadius) {
-        dx = -dx;
+    // Paddle
+    dxCtx.shadowBlur = 15;
+    dxCtx.shadowColor = "#00ffcc";
+    dxCtx.fillStyle = "#00ffcc";
+    dxCtx.fillRect(paddleX, dxCanvas.height - 22, paddleWidth, paddleHeight);
+    dxCtx.shadowBlur = 0;
+
+    // Balls
+    for (let i = balls.length - 1; i >= 0; i--) {
+        let b = balls[i];
+        b.x += b.dx; b.y += b.dy;
+        if (b.x < 8 || b.x > dxCanvas.width - 8) { b.dx = -b.dx; createParticles(b.x, b.y, "#ff007f"); }
+        if (b.y < 8) { b.dy = -b.dy; createParticles(b.x, b.y, "#ff007f"); }
+        
+        if (b.y > dxCanvas.height - 22 && b.x > paddleX && b.x < paddleX + paddleWidth) {
+            let hit = (b.x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
+            b.dx = hit * b.speed; b.dy = -Math.abs(b.dy);
+            createParticles(b.x, b.y, "#00ffcc");
+        }
+
+        if (b.y > dxCanvas.height) balls.splice(i, 1);
+
+        dxCtx.beginPath();
+        dxCtx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        dxCtx.fillStyle = "#ff007f";
+        dxCtx.shadowBlur = 15;
+        dxCtx.shadowColor = "#ff007f";
+        dxCtx.fill();
+        dxCtx.shadowBlur = 0;
     }
 
-    if (ballY + dy < ballRadius) {
-        dy = -dy;
-    }
-
-    // 🎯 REALISTIC PADDLE PHYSICS
-    if (
-        ballY + dy > canvas.height - paddleHeight - 5 - ballRadius &&
-        ballX > paddleX &&
-        ballX < paddleX + paddleWidth
-    ) {
-        let hitPoint = (ballX - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
-        dx = hitPoint * speed;
-        dy = -Math.abs(dy);
-    }
-
-    // Lose life
-    if (ballY > canvas.height) {
-        lives--;
-        if (lives <= 0) {
-            alert("Game Over! Score: " + score);
-            document.location.reload();
+    if (balls.length === 0) {
+        livesDx--;
+        if (livesDx <= 0) {
+            isGameOverDx = true;
+            winDx = false;
+            setTimeout(() => { document.location.reload(); }, 2000);
         } else {
-            resetBall();
+            balls.push({ x: dxCanvas.width / 2, y: dxCanvas.height - 40, radius: 8, dx: 3.5, dy: -3.5, speed: 4.5 });
         }
     }
 
-    // Movement
-    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 6;
-    if (leftPressed && paddleX > 0) paddleX -= 6;
-
-    ballX += dx;
-    ballY += dy;
-
-    requestAnimationFrame(draw);
+    dxCtx.fillStyle = "#fff";
+    dxCtx.font = "12px Orbitron";
+    dxCtx.textAlign = "left";
+    dxCtx.fillText("SCORE: " + scoreDx, 15, 25);
+    dxCtx.fillText("LIVES: " + livesDx, dxCanvas.width - 80, 25);
 }
 
-backgroundImage.onload = () => draw();
+
+/* ================= 2. TURBO CAR RACING GAME ================= */
+const carCanvas = document.getElementById("carCanvas");
+const carCtx = carCanvas.getContext("2d");
+
+function createCarCanvas(bodyColor, windowColor) {
+    let c = document.createElement('canvas');
+    c.width = 36; c.height = 64;
+    let cx = c.getContext('2d');
+    
+    cx.fillStyle = "rgba(0,0,0,0.4)";
+    cx.fillRect(2, 2, 32, 60);
+    cx.fillStyle = bodyColor;
+    cx.beginPath();
+    cx.roundRect(4, 6, 28, 52, [10, 10, 12, 12]);
+    cx.fill();
+
+    cx.fillStyle = "#111";
+    cx.fillRect(7, 20, 22, 22);
+    cx.fillStyle = windowColor;
+    cx.fillRect(9, 22, 18, 12);
+    cx.fillRect(9, 38, 18, 6);
+
+    cx.fillStyle = "#ffffaa";
+    cx.fillRect(6, 6, 6, 4);
+    cx.fillRect(24, 6, 6, 4);
+    cx.fillStyle = "#ff2222";
+    cx.fillRect(6, 54, 6, 3);
+    cx.fillRect(24, 54, 6, 3);
+
+    cx.fillStyle = "#000";
+    cx.fillRect(1, 10, 4, 12);
+    cx.fillRect(31, 10, 4, 12);
+    cx.fillRect(1, 42, 4, 12);
+    cx.fillRect(31, 42, 4, 12);
+
+    return c;
+}
+
+const playerCarImg = createCarCanvas('#00ffcc', '#003333');
+const enemyCarImgs = [
+    createCarCanvas('#ff3344', '#330000'),
+    createCarCanvas('#ffaa00', '#332200'),
+    createCarCanvas('#ab00ff', '#220033')
+];
+
+let carX = carCanvas.width / 2 - 18;
+let carY = carCanvas.height - 85;
+let carWidth = 36;
+let carHeight = 64;
+let roadSpeed = 4.5;
+let roadLineOffset = 0;
+let obstacles = [];
+let scoreCar = 0;
+let isGameOverCar = false;
+
+function resetCarGame() {
+    carX = carCanvas.width / 2 - 18;
+    scoreCar = 0;
+    roadSpeed = 4.5;
+    obstacles = [];
+    isGameOverCar = false;
+}
+
+carCanvas.addEventListener("mousemove", e => {
+    if (activeGame !== 'car' || isGameOverCar) return;
+    let rect = carCanvas.getBoundingClientRect();
+    carX = (e.clientX - rect.left) * (carCanvas.width / rect.width) - carWidth / 2;
+    carX = Math.max(75, Math.min(carCanvas.width - 110 - carWidth, carX));
+});
+
+carCanvas.addEventListener("touchstart", handleCarTouch, { passive: false });
+carCanvas.addEventListener("touchmove", handleCarTouch, { passive: false });
+
+function handleCarTouch(e) {
+    if (activeGame !== 'car' || isGameOverCar) return;
+    e.preventDefault();
+    let rect = carCanvas.getBoundingClientRect();
+    let touch = e.touches[0];
+    carX = (touch.clientX - rect.left) * (carCanvas.width / rect.width) - carWidth / 2;
+    carX = Math.max(75, Math.min(carCanvas.width - 110 - carWidth, carX));
+}
+
+function updateCarGame() {
+    if (activeGame !== 'car') return;
+
+    carCtx.fillStyle = "#181824";
+    carCtx.fillRect(0, 0, carCanvas.width, carCanvas.height);
+
+    carCtx.fillStyle = "#122612";
+    carCtx.fillRect(0, 0, 70, carCanvas.height);
+    carCtx.fillRect(carCanvas.width - 70, 0, 70, carCanvas.height);
+
+    carCtx.fillStyle = "#cc3333";
+    carCtx.fillRect(66, 0, 4, carCanvas.height);
+    carCtx.fillRect(carCanvas.width - 70, 0, 4, carCanvas.height);
+
+    if (isGameOverCar) {
+        carCtx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        carCtx.fillRect(0, 0, carCanvas.width, carCanvas.height);
+        carCtx.fillStyle = "#ff4444";
+        carCtx.font = "bold 22px Orbitron";
+        carCtx.textAlign = "center";
+        carCtx.fillText("CRASHED!", carCanvas.width / 2, carCanvas.height / 2 - 15);
+        carCtx.fillStyle = "#fff";
+        carCtx.font = "13px Orbitron";
+        carCtx.fillText("Score: " + scoreCar, carCanvas.width / 2, carCanvas.height / 2 + 15);
+        carCtx.fillText("Restarting...", carCanvas.width / 2, carCanvas.height / 2 + 40);
+        return;
+    }
+
+    roadLineOffset = (roadLineOffset + roadSpeed) % 45;
+    carCtx.fillStyle = "#ffcc00";
+    for (let y = -45; y < carCanvas.height; y += 45) {
+        carCtx.fillRect(carCanvas.width / 2 - 4, y + roadLineOffset, 8, 25);
+    }
+
+    if (rightPressed) carX += 7;
+    if (leftPressed) carX -= 7;
+    carX = Math.max(75, Math.min(carCanvas.width - 75 - carWidth, carX));
+
+    if (Math.random() < 0.022) {
+        let lanes = [95, 215, 345, 410];
+        let laneX = lanes[Math.floor(Math.random() * lanes.length)];
+        let randomImg = enemyCarImgs[Math.floor(Math.random() * enemyCarImgs.length)];
+        obstacles.push({ x: laneX, y: -90, width: 36, height: 64, img: randomImg });
+    }
+
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        let obs = obstacles[i];
+        obs.y += roadSpeed;
+
+        carCtx.drawImage(obs.img, obs.x, obs.y, obs.width, obs.height);
+
+        if (
+            carX < obs.x + obs.width - 6 &&
+            carX + carWidth - 6 > obs.x &&
+            carY < obs.y + obs.height - 6 &&
+            carY + carHeight - 6 > obs.y
+        ) {
+            isGameOverCar = true;
+            setTimeout(() => { resetCarGame(); }, 1600);
+        }
+
+        if (obs.y > carCanvas.height) {
+            obstacles.splice(i, 1);
+            scoreCar += 10;
+            roadSpeed = 4.5 + Math.floor(scoreCar / 120);
+        }
+    }
+
+    carCtx.drawImage(playerCarImg, carX, carY, carWidth, carHeight);
+
+    carCtx.fillStyle = "#fff";
+    carCtx.font = "12px Orbitron";
+    carCtx.textAlign = "left";
+    carCtx.fillText("SCORE: " + scoreCar, 85, 25);
+    carCtx.fillText("SPEED: " + roadSpeed.toFixed(1) + "X", carCanvas.width - 150, 25);
+}
+
+
+/* ================= MAIN GAME LOOP ================= */
+function mainLoop() {
+    updateDxGame();
+    updateCarGame();
+    requestAnimationFrame(mainLoop);
+}
+
+mainLoop();
 </script>
 
 </body>
